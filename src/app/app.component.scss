@@ -8,9 +8,19 @@ label {
 }
 
 table {
+  border-spacing: 0;
+
   td {
     width: 20px;
     height: 20px;
-    border: solid 1px black;
+    border: solid 1px white;
+
+    text-align: center;
+    font-family: Arial, 'sans-serif';
+    font-size: 14;
+
+    &.normal { background-color: lightgreen; }
+    &.weekend { background-color: yellow; }
+    &.empty { background-color: lightgrey; }
   }
 }
