@@ -50,6 +50,11 @@ export class AppComponent {
     this.updateCalendar();
   }
 
+  changeCode(code: string) {
+    this.code = code;
+    this.updateCalendar();
+  }
+
   updateCalendar() { this.calendar = this.buildCalendar(this.start, this.days, this.code); }
 
   buildCalendar(start, days, code): CalendarData {
