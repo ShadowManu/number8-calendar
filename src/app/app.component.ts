@@ -6,53 +6,15 @@ interface CalendarData { [year: number]: YearData; }
 interface YearData { [month: number]: MonthData; }
 interface MonthData { [day: number]: DayData; }
 
-interface DayData {
-  text: string;
-  css: string;
-}
+interface DayData { text: string; css: string; }
 
-const DEFAULT_DAY_DATA = {
-  text: '',
-  css: 'empty'
-};
+const DEFAULT_DAY_DATA = { text: '', css: 'empty' };
 
 const DAY_SYMBOLS = Array.from('SMTWTFS');
 
 const MONTH_NAMES = {
-  1: 'January',
-  2: 'February',
-  3: 'March',
-  4: 'April',
-  5: 'May',
-  6: 'June',
-  7: 'July',
-  8: 'August',
-  9: 'September',
-  10: 'October',
-  11: 'November',
-  12: 'December',
-}
-
-function buildCalendar(start, days): CalendarData {
-  const startTime = DateTime.fromFormat(start, 'L/d/y');
-
-  if (!startTime.isValid) { return {}; }
-
-  const calendar = {};
-
-  for (let i = 0; i < days; i++) {
-    const dayTime = startTime.plus({ days: i });
-    const { year, month, day } = dayTime.toObject();
-
-    const isWeekend = [6, 7].includes(dayTime.weekday);
-    const css = isWeekend ? 'weekend' : 'normal';
-
-    const dayObj = { text: day, css };
-    set(calendar, [year, month, day], dayObj);
-  }
-
-  return calendar;
-}
+  1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June',
+  7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December', }
 
 @Component({
   selector: 'n8c-root',
@@ -60,7 +22,7 @@ function buildCalendar(start, days): CalendarData {
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  start = '05/09/2018'; // Date string
+  start = '05/09/2018';
   days = 260;
   code: string;
 
@@ -69,6 +31,12 @@ export class AppComponent {
   constructor() {
     this.updateCalendar();
   }
+
+  keys<T extends Object>(obj: T) { return Object.keys(obj); }
+
+  daySymbols() { return DAY_SYMBOLS; }
+
+  monthName(number: number) { return MONTH_NAMES[number]; }
 
   changeStart(start: string) {
     this.start = start;
@@ -80,15 +48,30 @@ export class AppComponent {
     this.updateCalendar();
   }
 
-  updateCalendar() { this.calendar = buildCalendar(this.start, this.days); }
+  updateCalendar() { this.calendar = this.buildCalendar(this.start, this.days); }
 
-  keys<T extends Object>(obj: T) { return Object.keys(obj); }
+  buildCalendar(start, days): CalendarData {
+    const startTime = DateTime.fromFormat(start, 'L/d/y');
 
-  daySymbols() { return DAY_SYMBOLS; }
+    if (!startTime.isValid) { return {}; }
 
-  monthName(number: number) { return MONTH_NAMES[number]; }
+    const calendar = {};
 
-  tabulate(year: number, month: number, data: MonthData) {
+    for (let i = 0; i < days; i++) {
+      const dayTime = startTime.plus({ days: i });
+      const { year, month, day } = dayTime.toObject();
+
+      const isWeekend = [6, 7].includes(dayTime.weekday);
+      const css = isWeekend ? 'weekend' : 'normal';
+
+      const dayObj = { text: day, css };
+      set(calendar, [year, month, day], dayObj);
+    }
+
+    return calendar;
+  }
+
+  tabulate(year: number, month: number, data: MonthData): DayData[][] {
     const startTime = DateTime.fromObject({ year, month });
     const offset = startTime.weekday % 7; // zero-based offset from the first cell
     // TODO Define rows
@@ -101,5 +84,4 @@ export class AppComponent {
       });
     });
   }
-
 }
