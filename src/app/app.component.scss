@@ -22,5 +22,6 @@ table {
     &.normal { background-color: lightgreen; }
     &.weekend { background-color: yellow; }
     &.empty { background-color: lightgrey; }
+    &.holiday { background-color: orange; }
   }
 }

@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { find, keys, range, setWith } from 'lodash';
 import { DateTime } from 'luxon';
 
+import { isHoliday } from './holidays';
+
 interface CalendarData { [year: number]: YearData; }
 interface YearData { [month: number]: MonthData; }
 interface MonthData { [day: number]: DayData; }
@@ -24,7 +26,7 @@ const MONTH_NAMES = {
 export class AppComponent {
   start = '05/09/2018';
   days = 260;
-  code: string;
+  code = 'US';
 
   calendar: CalendarData;
 
@@ -48,9 +50,9 @@ export class AppComponent {
     this.updateCalendar();
   }
 
-  updateCalendar() { this.calendar = this.buildCalendar(this.start, this.days); }
+  updateCalendar() { this.calendar = this.buildCalendar(this.start, this.days, this.code); }
 
-  buildCalendar(start, days): CalendarData {
+  buildCalendar(start, days, code): CalendarData {
     const startTime = DateTime.fromFormat(start, 'L/d/y');
 
     if (!startTime.isValid) { return {}; }
@@ -62,7 +64,11 @@ export class AppComponent {
       const { year, month, day } = dayTime.toObject();
 
       const isWeekend = [6, 7].includes(dayTime.weekday);
-      const css = isWeekend ? 'weekend' : 'normal';
+      const isHoly = isHoliday(year, month, day, code);
+
+      let css = 'normal';
+      if (isWeekend) { css = 'weekend'; }
+      if (isHoly) { css += ' holiday'; }
 
       const dayObj = { text: day, css };
       setWith(calendar, [year, month, day], dayObj, Object);
