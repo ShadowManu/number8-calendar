@@ -18,12 +18,18 @@
 
 <!-- Calendars -->
 <div *ngFor="let year of keys(calendar)">
-  Year {{ year }}
-
   <div *ngFor="let month of keys(calendar[year])">
-    Month  {{ month }}
 
     <table *ngIf="tabulate(+year, +month, calendar[year][month]) as tabular">
+      <!-- Day Header -->
+      <tr>
+        <td *ngFor="let symbol of daySymbols()">{{ symbol }}</td>
+      </tr>
+
+      <tr class="title">
+        <td colspan="7">{{ month }} {{ year }}</td>
+      </tr>
+
       <tr *ngFor="let row of tabular">
         <td [ngClass]="day.css" *ngFor="let day of row">
           {{ day.text }}

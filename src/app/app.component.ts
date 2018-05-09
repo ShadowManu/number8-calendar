@@ -16,6 +16,8 @@ const DEFAULT_DAY_DATA = {
   css: 'empty'
 };
 
+const DAY_SYMBOLS = Array.from('SMTWTFS');
+
 function buildCalendar(start, days): CalendarData {
   const startTime = DateTime.fromFormat(start, 'L/d/y');
 
@@ -44,7 +46,7 @@ function buildCalendar(start, days): CalendarData {
 })
 export class AppComponent {
   start = '05/09/2018'; // Date string
-  days = 15;
+  days = 260;
   code: string;
 
   calendar: CalendarData;
@@ -67,11 +69,13 @@ export class AppComponent {
 
   keys<T extends Object>(obj: T) { return Object.keys(obj); }
 
+  daySymbols() { return DAY_SYMBOLS; }
+
   tabulate(year: number, month: number, data: MonthData) {
     const startTime = DateTime.fromObject({ year, month });
-    const offset = startTime.weekday % 7;
+    const offset = startTime.weekday % 7; // zero-based offset from the first cell
     // TODO Define rows
-    const rows = 5;
+    const rows = 6;
 
     return range(rows).map(row => {
       return range(7).map(column => {
