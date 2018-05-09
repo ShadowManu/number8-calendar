@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { range, set } from 'lodash';
+import { find, keys, range, setWith } from 'lodash';
 import { DateTime } from 'luxon';
 
 interface CalendarData { [year: number]: YearData; }
@@ -32,7 +32,7 @@ export class AppComponent {
     this.updateCalendar();
   }
 
-  keys<T extends Object>(obj: T) { return Object.keys(obj); }
+  keys(obj: any) { return keys(obj); }
 
   daySymbols() { return DAY_SYMBOLS; }
 
@@ -65,7 +65,7 @@ export class AppComponent {
       const css = isWeekend ? 'weekend' : 'normal';
 
       const dayObj = { text: day, css };
-      set(calendar, [year, month, day], dayObj);
+      setWith(calendar, [year, month, day], dayObj, Object);
     }
 
     return calendar;
@@ -74,14 +74,15 @@ export class AppComponent {
   tabulate(year: number, month: number, data: MonthData): DayData[][] {
     const startTime = DateTime.fromObject({ year, month });
     const offset = startTime.weekday % 7; // zero-based offset from the first cell
-    // TODO Define rows
-    const rows = 6;
+    const maxRows = 6;
 
-    return range(rows).map(row => {
+    return range(maxRows).map(row => {
       return range(7).map(column => {
         const day = row * 7 + column - offset + 1;
         return data[day] || DEFAULT_DAY_DATA;
       });
-    });
+    })
+    // Strip empty rows
+    .filter(row => find(row, dayObj => dayObj.css !== 'empty') !== undefined);
   }
 }
