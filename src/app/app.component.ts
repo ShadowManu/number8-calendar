@@ -18,6 +18,21 @@ const DEFAULT_DAY_DATA = {
 
 const DAY_SYMBOLS = Array.from('SMTWTFS');
 
+const MONTH_NAMES = {
+  1: 'January',
+  2: 'February',
+  3: 'March',
+  4: 'April',
+  5: 'May',
+  6: 'June',
+  7: 'July',
+  8: 'August',
+  9: 'September',
+  10: 'October',
+  11: 'November',
+  12: 'December',
+}
+
 function buildCalendar(start, days): CalendarData {
   const startTime = DateTime.fromFormat(start, 'L/d/y');
 
@@ -70,6 +85,8 @@ export class AppComponent {
   keys<T extends Object>(obj: T) { return Object.keys(obj); }
 
   daySymbols() { return DAY_SYMBOLS; }
+
+  monthName(number: number) { return MONTH_NAMES[number]; }
 
   tabulate(year: number, month: number, data: MonthData) {
     const startTime = DateTime.fromObject({ year, month });
